@@ -40,7 +40,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Core Proxy Functionality
 - **M3U8 Processing**: Handles both playlist files and video segments with automatic URL rewriting
-- **Header Injection**: Automatic application of origin, referer, and user-agent headers for webxzplay.cfd
+- **Custom Header Injection**: Configurable origin and referer headers with webxzplay.cfd as default fallback
+- **URL Parameter Support**: Accepts custom `origin` and `referer` query parameters for flexible header configuration
 - **Content Type Detection**: Proper MIME type handling for different streaming content types
 - **Error Handling**: Comprehensive validation and error responses for invalid URLs or failed requests
 - **Request Logging**: Database logging of all proxy requests for monitoring and analytics

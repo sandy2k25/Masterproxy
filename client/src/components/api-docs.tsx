@@ -28,34 +28,59 @@ export default function ApiDocs() {
                     <h5 className="text-sm font-semibold text-foreground mb-2">Query Parameters</h5>
                     <Card className="bg-background border-border">
                       <CardContent className="p-3">
-                        <div className="font-mono text-sm">
-                          <span className="text-primary">url</span>
-                          <span className="text-muted-foreground"> (required): </span>
-                          <span className="text-foreground">The M3U8 stream URL to proxy</span>
+                        <div className="font-mono text-sm space-y-2">
+                          <div>
+                            <span className="text-primary">url</span>
+                            <span className="text-muted-foreground"> (required): </span>
+                            <span className="text-foreground">The M3U8 stream URL to proxy</span>
+                          </div>
+                          <div>
+                            <span className="text-primary">origin</span>
+                            <span className="text-muted-foreground"> (optional): </span>
+                            <span className="text-foreground">Custom Origin header (defaults to webxzplay.cfd)</span>
+                          </div>
+                          <div>
+                            <span className="text-primary">referer</span>
+                            <span className="text-muted-foreground"> (optional): </span>
+                            <span className="text-foreground">Custom Referer header (defaults to webxzplay.cfd)</span>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
                   </div>
 
                   <div>
-                    <h5 className="text-sm font-semibold text-foreground mb-2">Example Request</h5>
+                    <h5 className="text-sm font-semibold text-foreground mb-2">Example Requests</h5>
                     <Card className="bg-background border-border">
                       <CardContent className="p-3">
-                        <pre className="font-mono text-sm">
-                          <span className="text-muted-foreground">GET </span>
-                          <span className="text-accent">/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8</span>
-                        </pre>
+                        <div className="space-y-3">
+                          <div>
+                            <div className="text-xs text-muted-foreground mb-1">Basic request (uses default headers):</div>
+                            <pre className="font-mono text-sm">
+                              <span className="text-muted-foreground">GET </span>
+                              <span className="text-accent">/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8</span>
+                            </pre>
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground mb-1">With custom headers:</div>
+                            <pre className="font-mono text-sm">
+                              <span className="text-muted-foreground">GET </span>
+                              <span className="text-accent">/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com</span>
+                            </pre>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
 
                   <div>
-                    <h5 className="text-sm font-semibold text-foreground mb-2">Applied Headers</h5>
+                    <h5 className="text-sm font-semibold text-foreground mb-2">Headers Applied to Upstream Request</h5>
                     <Card className="bg-background border-border">
                       <CardContent className="p-3">
                         <div className="font-mono text-sm space-y-1">
-                          <div><span className="text-primary">Origin:</span> <span className="text-accent">https://webxzplay.cfd</span></div>
-                          <div><span className="text-primary">Referer:</span> <span className="text-accent">https://webxzplay.cfd</span></div>
+                          <div><span className="text-primary">Origin:</span> <span className="text-accent">Custom value or https://webxzplay.cfd (default)</span></div>
+                          <div><span className="text-primary">Referer:</span> <span className="text-accent">Custom value or https://webxzplay.cfd (default)</span></div>
+                          <div><span className="text-primary">User-Agent:</span> <span className="text-accent">Mozilla/5.0 (Windows NT 10.0; Win64; x64)...</span></div>
                         </div>
                       </CardContent>
                     </Card>

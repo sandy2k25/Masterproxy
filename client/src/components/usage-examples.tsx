@@ -18,12 +18,19 @@ export default function UsageExamples() {
               <CardContent className="p-4">
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
 {`const streamUrl = 'https://zekonew.newkso.ru/zeko/premium598/mono.m3u8';
-const proxyUrl = \`/stream?url=\${encodeURIComponent(streamUrl)}\`;
+const customOrigin = 'https://example.com';
+const customReferer = 'https://example.com';
+
+const params = new URLSearchParams({
+  url: streamUrl,
+  origin: customOrigin,
+  referer: customReferer
+});
+const proxyUrl = \`/stream?\${params.toString()}\`;
 
 fetch(proxyUrl)
   .then(response => response.text())
   .then(playlist => {
-    // Handle M3U8 playlist content
     console.log('Playlist loaded:', playlist);
   })
   .catch(error => {
@@ -40,11 +47,18 @@ fetch(proxyUrl)
             <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
-{`const player = videojs('video-player', {
+{`const streamUrl = 'https://zekonew.newkso.ru/zeko/premium598/mono.m3u8';
+const params = new URLSearchParams({
+  url: streamUrl,
+  origin: 'https://custom.com',
+  referer: 'https://custom.com'
+});
+
+const player = videojs('video-player', {
   fluid: true,
   responsive: true,
   sources: [{
-    src: '/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8',
+    src: \`/stream?\${params.toString()}\`,
     type: 'application/x-mpegURL'
   }]
 });
@@ -63,8 +77,14 @@ player.ready(() => {
             <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
-{`curl -X GET \\
+{`# Basic request (default headers)
+curl -X GET \\
   "https://your-domain.com/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8" \\
+  -H "Accept: application/vnd.apple.mpegurl"
+
+# With custom headers
+curl -X GET \\
+  "https://your-domain.com/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com" \\
   -H "Accept: application/vnd.apple.mpegurl"`}
                 </pre>
               </CardContent>
@@ -77,9 +97,18 @@ player.ready(() => {
             <Card className="bg-muted border-border">
               <CardContent className="p-4">
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
-{`<video controls width="100%" height="auto">
+{`<!-- Basic usage -->
+<video controls width="100%" height="auto">
   <source 
     src="/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8" 
+    type="application/x-mpegURL">
+  Your browser does not support HLS streaming.
+</video>
+
+<!-- With custom headers -->
+<video controls width="100%" height="auto">
+  <source 
+    src="/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com" 
     type="application/x-mpegURL">
   Your browser does not support HLS streaming.
 </video>`}

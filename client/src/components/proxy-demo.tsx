@@ -17,13 +17,15 @@ interface ValidationResponse {
 
 export default function ProxyDemo() {
   const [streamUrl, setStreamUrl] = useState("https://zekonew.newkso.ru/zeko/premium598/mono.m3u8");
+  const [origin, setOrigin] = useState("https://webxzplay.cfd");
+  const [referer, setReferer] = useState("https://webxzplay.cfd");
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [status, setStatus] = useState("Ready to stream");
   const { toast } = useToast();
 
   const validateMutation = useMutation({
-    mutationFn: async (url: string): Promise<ValidationResponse> => {
-      const response = await apiRequest("POST", "/api/validate-url", { url });
+    mutationFn: async (data: { url: string; origin?: string; referer?: string }): Promise<ValidationResponse> => {
+      const response = await apiRequest("POST", "/api/validate-url", data);
       return response.json();
     },
     onSuccess: (data) => {
@@ -72,7 +74,11 @@ export default function ProxyDemo() {
       return;
     }
 
-    validateMutation.mutate(streamUrl);
+    validateMutation.mutate({ 
+      url: streamUrl, 
+      origin: origin.trim() || undefined, 
+      referer: referer.trim() || undefined 
+    });
   };
 
   const copyToClipboard = async () => {
@@ -116,28 +122,32 @@ export default function ProxyDemo() {
             </div>
             
             <div className="mt-6">
-              <h4 className="text-sm font-medium text-muted-foreground mb-3">Predefined Headers</h4>
-              <div className="space-y-3">
-                <Card className="bg-muted border-border">
-                  <CardContent className="p-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Origin:</span>
-                      <Badge variant="secondary" className="font-mono text-sm bg-accent/20 text-accent">
-                        https://webxzplay.cfd
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-muted border-border">
-                  <CardContent className="p-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Referer:</span>
-                      <Badge variant="secondary" className="font-mono text-sm bg-accent/20 text-accent">
-                        https://webxzplay.cfd
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+              <h4 className="text-sm font-medium text-muted-foreground mb-3">Custom Headers</h4>
+              <div className="space-y-4">
+                <div>
+                  <Label className="block text-xs font-medium text-muted-foreground mb-2">
+                    Origin
+                  </Label>
+                  <Input
+                    type="url"
+                    placeholder="https://webxzplay.cfd"
+                    value={origin}
+                    onChange={(e) => setOrigin(e.target.value)}
+                    className="w-full bg-muted border-border text-white placeholder-muted-foreground font-mono text-sm"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-xs font-medium text-muted-foreground mb-2">
+                    Referer
+                  </Label>
+                  <Input
+                    type="url"
+                    placeholder="https://webxzplay.cfd"
+                    value={referer}
+                    onChange={(e) => setReferer(e.target.value)}
+                    className="w-full bg-muted border-border text-white placeholder-muted-foreground font-mono text-sm"
+                  />
+                </div>
               </div>
             </div>
 

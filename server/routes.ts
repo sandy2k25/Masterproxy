@@ -6,7 +6,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Proxy endpoint for M3U8 streams
   app.get("/stream", async (req, res) => {
     try {
-      const { url } = req.query;
+      const { url, origin, referer } = req.query;
       
       if (!url || typeof url !== 'string') {
         return res.status(400).json({
@@ -29,10 +29,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         proxyUrl: `/stream?url=${encodeURIComponent(url)}`
       });
 
-      // Predefined headers for webxzplay.cfd
+      // Use custom headers if provided, otherwise use default webxzplay.cfd
       const headers = {
-        'Origin': 'https://webxzplay.cfd',
-        'Referer': 'https://webxzplay.cfd',
+        'Origin': (origin && typeof origin === 'string') ? origin : 'https://webxzplay.cfd',
+        'Referer': (referer && typeof referer === 'string') ? referer : 'https://webxzplay.cfd',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
       };
 
@@ -58,7 +58,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Rewrite segment URLs
             if (line.trim() && !line.startsWith('#') && !line.startsWith('http')) {
               const segmentUrl = baseUrl + line.trim();
-              return `/stream?url=${encodeURIComponent(segmentUrl)}`;
+              const params = new URLSearchParams({ url: segmentUrl });
+              if (origin && typeof origin === 'string') params.append('origin', origin);
+              if (referer && typeof referer === 'string') params.append('referer', referer);
+              return `/stream?${params.toString()}`;
             }
             return line;
           })
@@ -88,7 +91,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API endpoint to validate URLs
   app.post("/api/validate-url", async (req, res) => {
     try {
-      const { url } = req.body;
+      const { url, origin, referer } = req.body;
       
       if (!url || typeof url !== 'string') {
         return res.status(400).json({
@@ -113,9 +116,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Build proxy URL with custom headers if provided
+      const params = new URLSearchParams({ url });
+      if (origin && typeof origin === 'string') params.append('origin', origin);
+      if (referer && typeof referer === 'string') params.append('referer', referer);
+
       res.json({
         valid: true,
-        proxyUrl: `/stream?url=${encodeURIComponent(url)}`
+        proxyUrl: `/stream?${params.toString()}`
       });
     } catch (error) {
       console.error('Validation error:', error);

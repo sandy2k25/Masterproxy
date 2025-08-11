@@ -30,7 +30,11 @@ const params = new URLSearchParams({
   referer: customReferer
 });
 
-const proxyUrl = \`/stream/\${encodedUrl}?\${params.toString()}.m3u8\`;
+let proxyUrl = \`/stream/\${encodedUrl}\`;
+if (params.toString()) {
+  proxyUrl += \`?\${params.toString()}\`;
+}
+proxyUrl += '.m3u8';
 
 fetch(proxyUrl)
   .then(response => response.text())
@@ -62,7 +66,7 @@ const player = videojs('video-player', {
   fluid: true,
   responsive: true,
   sources: [{
-    src: \`/stream/\${encodedUrl}?\${params.toString()}.m3u8\`,
+    src: \`/stream/\${encodedUrl}\${params.toString() ? '?' + params.toString() : ''}.m3u8\`,
     type: 'application/x-mpegURL'
   }]
 });

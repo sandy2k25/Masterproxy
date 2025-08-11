@@ -155,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Build proxy URL with format: /stream/[url-without-extension]?origin=...&referer=...&.m3u8
+      // Build proxy URL with format: /stream/[url-without-extension]?origin=...&referer=....m3u8
       let baseUrl = url;
       let extension = '';
       
@@ -169,14 +169,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const encodedBaseUrl = encodeURIComponent(baseUrl);
+      
+      // Build the URL properly: /stream/[encoded-url]?params.extension
+      let proxyUrl = `/stream/${encodedBaseUrl}`;
+      
       const params = new URLSearchParams();
       if (origin && typeof origin === 'string') params.append('origin', origin);
       if (referer && typeof referer === 'string') params.append('referer', referer);
-      const queryString = params.toString();
+      
+      if (params.toString()) {
+        proxyUrl += `?${params.toString()}`;
+      }
+      proxyUrl += extension;
 
       res.json({
         valid: true,
-        proxyUrl: `/stream/${encodedBaseUrl}${queryString ? '?' + queryString : ''}${extension}`
+        proxyUrl: proxyUrl
       });
     } catch (error) {
       console.error('Validation error:', error);

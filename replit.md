@@ -91,7 +91,8 @@ Preferred communication style: Simple, everyday language.
   - `/api/proxy-requests.ts` - Request history endpoint
 - **Configuration**: `vercel.json` configured for proper routing and function timeouts
 - **Storage**: Uses in-memory storage for fast cold starts in serverless environment
-- **Build Process**: Vite builds frontend to `client/dist`, functions deploy independently
+- **Build Process**: Vite builds frontend to `dist/public`, backend server to `dist/index.js`
+- **Fixed Issues**: Resolved output directory mismatch between Vite config (`dist/public`) and Vercel config (August 2025)
 
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure

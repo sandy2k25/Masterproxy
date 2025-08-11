@@ -2,6 +2,11 @@
 
 A professional M3U8 streaming proxy service built with React and Express.js. The application provides a clean, user-friendly interface for proxying M3U8 streaming URLs with automatic header injection.
 
+## Requirements
+
+- **Node.js**: Version 20.11.0 or higher (required for `import.meta.dirname` support)
+- **npm**: Version 9.x or higher
+
 ## Features
 
 - **Clean URL Format**: `/stream/?origin=...&referer=.../encoded-url.m3u8`
@@ -30,6 +35,16 @@ The service supports a clean URL structure where:
 ```
 
 ## Deployment
+
+### Railway Deployment (Recommended)
+
+Railway provides the best hosting environment for this streaming proxy service:
+
+1. **Quick Deploy:** Connect your GitHub repository to Railway
+2. **Auto-Configuration:** Railway automatically detects Node.js 20+ from `.nvmrc`
+3. **Production Ready:** Full Node.js environment with no serverless limitations
+
+See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for detailed instructions.
 
 ### Vercel Deployment
 

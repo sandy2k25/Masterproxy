@@ -26,6 +26,7 @@ git push -u origin main
    - Build Command: `npm run build`
    - Start Command: `npm run start` 
    - Port: Railway will auto-detect from your Express server
+   - Node.js Version: Automatically detected from `.nvmrc` (v20.11.0+)
 
 ### 3. Environment Variables (Optional)
 If you need database or other secrets:
@@ -66,3 +67,23 @@ Railway automatically handles:
 - CDN integration
 
 Your M3U8 proxy service will run exactly as it does locally, but with production-grade infrastructure.
+
+## Troubleshooting
+
+### Node.js Version Error
+If you encounter an error like:
+```
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+```
+
+This indicates Railway is using an older Node.js version (18.x) instead of the required Node.js 20.x. The solution:
+
+1. **Check your repository** has `.nvmrc` file with `20.11.0`
+2. **Check your repository** has `nixpacks.toml` with Node.js 20 configuration
+3. **Redeploy** your application after adding these files
+4. **Verify** in Railway logs that it's using Node.js 20.x during build
+
+### Common Issues
+- **Build Failures**: Ensure all environment variables are set in Railway dashboard
+- **Port Issues**: Railway automatically handles port allocation, no manual configuration needed
+- **SSL Issues**: Railway provides automatic HTTPS, no manual setup required

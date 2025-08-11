@@ -85,11 +85,13 @@ Preferred communication style: Simple, everyday language.
 
 ### Railway Deployment (Recommended)
 - **Full Node.js Environment**: Perfect for streaming proxy applications without serverless limitations
+- **Node.js Version**: Requires Node.js 20.11.0+ (configured via `.nvmrc` and `nixpacks.toml`)
 - **Build Process**: `npm run build` creates optimized production bundle
 - **Start Command**: `npm run start` runs the Express server in production mode
 - **Configuration**: `railway.json` provides deployment settings and health checks
 - **Performance**: No cold starts, efficient binary data handling, always-on server
 - **Cost**: $5/month for production usage, free tier available for development
+- **Version Fix**: Added `.nvmrc` and `nixpacks.toml` to enforce Node.js 20+ on Railway (fixes `import.meta.dirname` error)
 
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure

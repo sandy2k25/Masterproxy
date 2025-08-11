@@ -1,6 +1,9 @@
 # DomCloud Quick Fix for Path Error
 
-## Error: Cannot find module '/home/username/public_html/dist/src/index.js'
+## Common DomCloud Errors and Quick Fixes
+
+### Error 1: Cannot find module '/home/username/public_html/dist/src/index.js'
+### Error 2: Couldn't read package.json
 
 **Quick Solution for immediate deployment:**
 
@@ -83,4 +86,47 @@ The error happens because:
 - Make sure to rebuild after configuration changes
 - DomCloud uses Passenger to manage Node.js apps
 
-This should resolve the path issue immediately!
+### Fix for "Couldn't read package.json" Error
+
+This error occurs when DomCloud can't find or read your package.json file.
+
+**Solution Steps:**
+
+1. **Verify file upload**: Ensure `package.json` is in your root directory
+2. **Check file permissions**: Make sure package.json is readable
+3. **Use debug commands** in `.domcloud`:
+
+```yaml
+features:
+  - node lts
+nginx:
+  root: public_html/dist/public
+  passenger:
+    enabled: "on"
+    app_start_command: env PORT=$PORT node /home/heavy/public_html/dist/index.js
+    app_env: production
+commands:
+  - ls -la
+  - cat package.json
+  - npm install --production
+  - npm run build
+  - ls -la dist/
+```
+
+4. **Manual upload**: If automatic deployment fails:
+   - Upload all files via DomCloud File Manager
+   - Ensure `package.json` is in the root directory
+   - Check that file contents are not corrupted
+
+5. **Alternative deployment** without package.json dependency:
+```yaml
+features:
+  - node lts
+commands:
+  - wget https://nodejs.org/dist/latest-v20.x/node-v20.11.0-linux-x64.tar.xz
+  - cd /home/heavy/public_html && tar -xf node-*.tar.xz --strip-components=1
+  - export PATH=/home/heavy/public_html/bin:$PATH
+  - cd /home/heavy/public_html/dist && PORT=$PORT node index.js &
+```
+
+This should resolve both the path issue and package.json reading problems immediately!

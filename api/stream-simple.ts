@@ -11,61 +11,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
   
   try {
-    // Handle both formats:
-    // 1. Legacy: /stream?url=...
-    // 2. New: /stream/?origin=...&referer=.../encoded-url.m3u8
-    let url = req.query.url as string;
-    const { origin, referer } = req.query;
+    // Get URL from query parameters
+    const url = req.query.url as string;
     
-    // Check for new format: URL at the end after '/' in query string
-    if (!url && req.url) {
-      const queryPart = req.url.split('?')[1]; // Get query string
-      if (queryPart && queryPart.includes('/')) {
-        // Extract URL after the last '/' in query string
-        const parts = queryPart.split('/');
-        const urlPart = parts[parts.length - 1];
-        if (urlPart) {
-          try {
-            url = decodeURIComponent(urlPart);
-          } catch (error) {
-            return res.status(400).json({
-              error: "Invalid URL encoding"
-            });
-          }
-        }
-      }
-    }
-    
-    // Basic validation
-    if (!url || typeof url !== 'string') {
+    if (!url) {
       return res.status(400).json({
-        error: "URL parameter required",
-        debug: { queryUrl: req.query.url, fullUrl: req.url }
+        error: "Missing URL parameter"
       });
     }
 
+    // Simple validation
     if (!url.includes('.m3u8') && !url.includes('.ts')) {
       return res.status(400).json({
         error: "URL must be M3U8 or segment file"
       });
     }
 
-    // Simple headers
+    // Basic headers
     const headers = {
-      'Origin': (origin && typeof origin === 'string') ? origin : 'https://webxzplay.cfd',
-      'Referer': (referer && typeof referer === 'string') ? referer : 'https://webxzplay.cfd',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     };
 
-    // Simple fetch
+    // Simple fetch without timeout
     const response = await fetch(url, { headers });
     
     if (!response.ok) {
-      return res.status(502).json({
-        error: `Fetch failed: ${response.status}`
+      return res.status(response.status).json({
+        error: `Failed to fetch: ${response.status}`
       });
     }
 
+    // Handle content type
     const contentType = response.headers.get('content-type') || 'application/octet-stream';
     
     if (url.includes('.m3u8')) {
@@ -81,10 +57,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
   } catch (error) {
-    console.error('Stream proxy error:', error);
+    console.error('Simple proxy error:', error);
     return res.status(500).json({
-      error: "Proxy error",
-      details: error instanceof Error ? error.message : String(error)
+      error: "Proxy failed",
+      message: String(error)
     });
   }
 }

@@ -7,14 +7,20 @@
 - **Solution**: Updated `vercel.json` to use correct `outputDirectory: "dist/public"`
 - **Status**: ✅ Fixed
 
-### 2. Serverless Function Crashes
-- **Problem**: Functions were crashing due to module import issues and complex storage
+### 2. Serverless Function Crashes - Complex URL Parsing
+- **Problem**: Functions were crashing due to complex URL parsing and module imports
 - **Solution**: 
-  - Removed complex storage imports from serverless functions
-  - Made each function completely independent
+  - Completely simplified all serverless functions
+  - Removed all complex storage and module imports
+  - Fixed URL parsing for both legacy and new format URLs
   - Added proper CORS headers
-  - Improved error handling with timeouts
+  - Simplified error handling
   - Fixed binary content handling for video segments
+- **Status**: ✅ Fixed (January 11, 2025)
+
+### 3. URL Format Compatibility  
+- **Problem**: Frontend generates complex URLs like `/stream/?origin=...&referer=.../encoded-url.m3u8` but stream function expected simple `url` parameter
+- **Solution**: Enhanced stream function to handle both formats properly
 - **Status**: ✅ Fixed
 
 ## Current Serverless Function Structure

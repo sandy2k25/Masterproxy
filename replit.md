@@ -104,6 +104,14 @@ Preferred communication style: Simple, everyday language.
 - **Configuration**: Uses `netlify.toml` and dedicated function files
 - **Limitations**: 10-second function timeout (free tier), cold starts for serverless functions
 
+### DomCloud Deployment
+- **Affordable Hosting**: Starting from $1/month with Node.js 20 LTS support
+- **Traditional Hosting**: Always-on server with no serverless limitations or cold starts
+- **Full Express Support**: Complete compatibility with streaming applications
+- **Configuration**: Uses `.domcloud` deployment script with NGINX + Passenger setup
+- **Custom Domains**: Included in hosting plans with free SSL certificates
+- **Performance**: Excellent for streaming with unlimited processing time
+
 ### Vercel Deployment (Alternative)
 - **Serverless Functions**: Pre-configured API endpoints in `/api` folder
 - **Edge Network**: Fast global deployment with automatic scaling

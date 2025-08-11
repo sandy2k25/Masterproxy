@@ -56,6 +56,16 @@ Netlify provides serverless hosting with generous free tier:
 
 See [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) for detailed instructions.
 
+### DomCloud Deployment
+
+DomCloud provides affordable shared hosting with full Node.js support:
+
+1. **Cost-Effective**: Starting from $1/month with Node.js 20 support
+2. **Traditional Hosting**: Always-on server without serverless limitations  
+3. **Easy Setup**: Uses `.domcloud` configuration file for deployment
+
+See [DOMCLOUD_DEPLOYMENT.md](DOMCLOUD_DEPLOYMENT.md) for detailed instructions.
+
 ### Vercel Deployment
 
 This project is optimized for Vercel deployment with serverless functions:

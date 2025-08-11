@@ -118,6 +118,15 @@ Preferred communication style: Simple, everyday language.
 - **Configuration**: Uses `vercel.json` for routing and function settings
 - **Deployment**: Existing serverless architecture ready for Vercel
 
+### Ubuntu VPS Deployment
+- **Full Control**: Complete server management with root access
+- **Professional Setup**: Nginx reverse proxy, PM2 process manager, SSL certificates
+- **Auto-Deploy**: One-command deployment script with `bash deploy.sh`
+- **Performance**: Optimized for high-traffic streaming with rate limiting and caching
+- **Security**: Firewall, fail2ban, security headers, and hardening measures
+- **Monitoring**: Comprehensive logging, monitoring, and backup strategies
+- **Cost**: $5-40/month depending on server specs and provider
+
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure
 - **Development**: Hot reload and live preview during development

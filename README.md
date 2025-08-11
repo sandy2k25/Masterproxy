@@ -66,6 +66,16 @@ DomCloud provides affordable shared hosting with full Node.js support:
 
 See [DOMCLOUD_DEPLOYMENT.md](DOMCLOUD_DEPLOYMENT.md) for detailed instructions.
 
+### Ubuntu VPS Deployment
+
+Ubuntu VPS provides full control and excellent performance for streaming applications:
+
+1. **Professional Setup**: Complete server configuration with Nginx, PM2, and SSL
+2. **Auto-Deploy Script**: One-command deployment with `bash deploy.sh`
+3. **Production Ready**: Process management, logging, monitoring, and security hardening
+
+See [UBUNTU_VPS_DEPLOYMENT.md](UBUNTU_VPS_DEPLOYMENT.md) for detailed instructions.
+
 ### Vercel Deployment
 
 This project is optimized for Vercel deployment with serverless functions:

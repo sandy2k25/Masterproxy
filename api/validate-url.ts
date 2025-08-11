@@ -40,22 +40,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // Build proxy URL with format: /stream/?origin=...&referer=.../encoded-url.m3u8
-    const encodedUrl = encodeURIComponent(url);
-    
-    // Build the URL: /stream/?origin=...&referer=.../encoded-url
-    let proxyUrl = `/stream/`;
-    
+    // Use simpler proxy URL format: /proxy?url=...&origin=...&referer=...
     const params = new URLSearchParams();
+    params.append('url', url);
     if (origin && typeof origin === 'string') params.append('origin', origin);
     if (referer && typeof referer === 'string') params.append('referer', referer);
     
-    if (params.toString()) {
-      proxyUrl += `?${params.toString()}/`;
-    } else {
-      proxyUrl += '?/';
-    }
-    proxyUrl += encodedUrl;
+    const proxyUrl = `/proxy?${params.toString()}`;
 
     res.json({
       valid: true,

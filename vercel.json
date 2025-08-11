@@ -17,6 +17,12 @@
     },
     "api/stream-simple.ts": {
       "maxDuration": 25
+    },
+    "api/stream-minimal.ts": {
+      "maxDuration": 10
+    },
+    "api/proxy.ts": {
+      "maxDuration": 30
     }
   },
   "routes": [
@@ -31,6 +37,14 @@
     {
       "src": "/api/proxy-requests",
       "dest": "/api/proxy-requests.ts"
+    },
+    {
+      "src": "/proxy",
+      "dest": "/api/proxy.ts"
+    },
+    {
+      "src": "/stream-minimal(.*)",
+      "dest": "/api/stream-minimal.ts"
     },
     {
       "src": "/stream-simple(.*)",

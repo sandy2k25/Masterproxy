@@ -1,20 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
   
-  // Just return test response for now
+  // Simple test response
   return res.json({
-    message: "Stream function working",
+    status: 'working',
     method: req.method,
     url: req.url,
-    query: req.query
+    query: req.query,
+    timestamp: new Date().toISOString()
   });
 }

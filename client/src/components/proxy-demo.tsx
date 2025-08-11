@@ -45,11 +45,13 @@ export default function ProxyDemo() {
         });
       }
     },
-    onError: (error) => {
-      setStatus("Failed to validate URL");
+    onError: (error: any) => {
+      console.error('Validation error:', error);
+      const errorMessage = error?.message || error?.error || "Failed to validate URL";
+      setStatus(errorMessage);
       toast({
         title: "Error",
-        description: "Failed to validate URL",
+        description: errorMessage,
         variant: "destructive",
       });
     },

@@ -3,31 +3,57 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Proxy endpoint for M3U8 streams - supports /stream/[encoded-url]?origin=...&referer=....m3u8
-  app.get(["/stream/:encodedUrl", "/stream/:encodedUrl.m3u8", "/stream/:encodedUrl.ts"], async (req, res) => {
+  // Proxy endpoint for M3U8 streams - supports both formats:
+  // New: /stream/?origin=...&referer=.../encoded-url.m3u8
+  // Legacy: /stream/[encoded-url] or /stream?url=...
+  app.get(["/stream", "/stream/", "/stream/:encodedUrl", "/stream/:encodedUrl.m3u8", "/stream/:encodedUrl.ts"], async (req, res) => {
     try {
-      // Support both query parameter and path parameter formats
+      // Support multiple URL formats:
+      // 1. New format: /stream/?origin=...&referer=.../encoded-url.m3u8
+      // 2. Legacy query: /stream?url=...
+      // 3. Legacy path: /stream/encoded-url
+      
       let url = req.query.url as string;
       const { origin, referer } = req.query;
       
-      // If URL is in path parameter, decode it and reconstruct with extension
-      if (req.params.encodedUrl && !url) {
-        try {
-          let decodedUrl = decodeURIComponent(req.params.encodedUrl);
-          
-          // Add extension based on the route matched
-          if (req.path.endsWith('.m3u8')) {
-            decodedUrl += '.m3u8';
-          } else if (req.path.endsWith('.ts')) {
-            decodedUrl += '.ts';
+      // Check for new format: URL at the end of the query string after '/'
+      if (!url && req.originalUrl.includes('/stream/')) {
+        const urlParts = req.originalUrl.split('/stream/')[1];
+        if (urlParts) {
+          // Check if it has query parameters followed by URL
+          if (urlParts.includes('?') && urlParts.includes('/')) {
+            const afterQuery = urlParts.split('/').slice(1).join('/');
+            if (afterQuery) {
+              try {
+                url = decodeURIComponent(afterQuery);
+              } catch (error) {
+                return res.status(400).json({
+                  error: "Invalid URL encoding",
+                  message: "Failed to decode URL from new format"
+                });
+              }
+            }
           }
-          
-          url = decodedUrl;
-        } catch (error) {
-          return res.status(400).json({
-            error: "Invalid URL encoding",
-            message: "Failed to decode URL from path parameter"
-          });
+          // Legacy path parameter format
+          else if (req.params.encodedUrl) {
+            try {
+              let decodedUrl = decodeURIComponent(req.params.encodedUrl);
+              
+              // Add extension based on the route matched
+              if (req.path.endsWith('.m3u8')) {
+                decodedUrl += '.m3u8';
+              } else if (req.path.endsWith('.ts')) {
+                decodedUrl += '.ts';
+              }
+              
+              url = decodedUrl;
+            } catch (error) {
+              return res.status(400).json({
+                error: "Invalid URL encoding",
+                message: "Failed to decode URL from path parameter"
+              });
+            }
+          }
         }
       }
       
@@ -155,32 +181,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Build proxy URL with format: /stream/[url-without-extension]?origin=...&referer=....m3u8
-      let baseUrl = url;
-      let extension = '';
+      // Build proxy URL with format: /stream/?origin=...&referer=.../encoded-url.m3u8
+      const encodedUrl = encodeURIComponent(url);
       
-      // Extract extension if present
-      if (url.endsWith('.m3u8')) {
-        baseUrl = url.slice(0, -5); // Remove .m3u8
-        extension = '.m3u8';
-      } else if (url.endsWith('.ts')) {
-        baseUrl = url.slice(0, -3); // Remove .ts
-        extension = '.ts';
-      }
-      
-      const encodedBaseUrl = encodeURIComponent(baseUrl);
-      
-      // Build the URL properly: /stream/[encoded-url]?params.extension
-      let proxyUrl = `/stream/${encodedBaseUrl}`;
+      // Build the URL: /stream/?origin=...&referer=.../encoded-url
+      let proxyUrl = `/stream/`;
       
       const params = new URLSearchParams();
       if (origin && typeof origin === 'string') params.append('origin', origin);
       if (referer && typeof referer === 'string') params.append('referer', referer);
       
       if (params.toString()) {
-        proxyUrl += `?${params.toString()}`;
+        proxyUrl += `?${params.toString()}/`;
+      } else {
+        proxyUrl += '?/';
       }
-      proxyUrl += extension;
+      proxyUrl += encodedUrl;
 
       res.json({
         valid: true,

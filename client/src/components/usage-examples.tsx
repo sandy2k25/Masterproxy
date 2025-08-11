@@ -30,11 +30,13 @@ const params = new URLSearchParams({
   referer: customReferer
 });
 
-let proxyUrl = \`/stream/\${encodedUrl}\`;
+let proxyUrl = '/stream/';
 if (params.toString()) {
-  proxyUrl += \`?\${params.toString()}\`;
+  proxyUrl += \`?\${params.toString()}/\`;
+} else {
+  proxyUrl += '?/';
 }
-proxyUrl += '.m3u8';
+proxyUrl += encodedUrl;
 
 fetch(proxyUrl)
   .then(response => response.text())
@@ -66,7 +68,7 @@ const player = videojs('video-player', {
   fluid: true,
   responsive: true,
   sources: [{
-    src: \`/stream/\${encodedUrl}\${params.toString() ? '?' + params.toString() : ''}.m3u8\`,
+    src: \`/stream/\${params.toString() ? '?' + params.toString() : '?'}/\${encodedUrl}\`,
     type: 'application/x-mpegURL'
   }]
 });
@@ -92,7 +94,7 @@ curl -X GET \\
 
 # With custom headers
 curl -X GET \\
-  "https://your-domain.com/stream/https%3A%2F%2Fexample.com%2Fstream?origin=https://custom.com&referer=https://custom.com.m3u8" \\
+  "https://your-domain.com/stream/?origin=https://custom.com&referer=https://custom.com/https%3A%2F%2Fexample.com%2Fstream.m3u8" \\
   -H "Accept: application/vnd.apple.mpegurl"`}
                 </pre>
               </CardContent>
@@ -116,7 +118,7 @@ curl -X GET \\
 <!-- With custom headers -->
 <video controls width="100%" height="auto">
   <source 
-    src="/stream/https%3A%2F%2Fexample.com%2Fstream?origin=https://custom.com&referer=https://custom.com.m3u8" 
+    src="/stream/?origin=https://custom.com&referer=https://custom.com/https%3A%2F%2Fexample.com%2Fstream.m3u8" 
     type="application/x-mpegURL">
   Your browser does not support HLS streaming.
 </video>`}

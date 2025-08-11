@@ -1,7 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { storage } from '../server/storage';
+
+// In serverless environment, just log to console (no persistent storage)
+function logProxyRequest(originalUrl: string, proxyUrl: string) {
+  console.log(`Proxy request: ${originalUrl} -> ${proxyUrl}`);
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   try {
     // Support multiple URL formats:
     // 1. New format: /stream/?origin=...&referer=.../encoded-url.m3u8
@@ -44,10 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Log the proxy request
-    await storage.logProxyRequest({
-      originalUrl: url,
-      proxyUrl: `/stream?url=${encodeURIComponent(url)}`
-    });
+    logProxyRequest(url, `/stream?url=${encodeURIComponent(url)}`);
 
     // Use custom headers if provided, otherwise use default webxzplay.cfd
     const headers = {
@@ -57,7 +67,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
 
     // Fetch the content with predefined headers
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { 
+      headers,
+      method: 'GET',
+      // Add timeout for serverless environment
+      signal: AbortSignal.timeout(25000) // 25 second timeout
+    });
     
     if (!response.ok) {
       return res.status(response.status).json({
@@ -67,7 +82,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const contentType = response.headers.get('content-type');
-    const content = await response.text();
+    
+    // Handle different content types appropriately
+    let content;
+    if (url.includes('.m3u8')) {
+      content = await response.text();
+    } else {
+      content = await response.arrayBuffer();
+    }
 
     // If it's an M3U8 playlist, rewrite segment URLs to use our proxy
     if (url.includes('.m3u8')) {
@@ -109,10 +131,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Content-Type', contentType || 'video/mp2t');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
-    return res.send(Buffer.from(content, 'binary'));
+    return res.send(Buffer.from(content));
 
   } catch (error) {
     console.error('Proxy error:', error);
+    
+    // Handle specific error types
+    if (error.name === 'AbortError') {
+      return res.status(408).json({
+        error: "Request timeout",
+        message: "The stream request timed out"
+      });
+    }
+    
+    if (error.message && error.message.includes('fetch')) {
+      return res.status(502).json({
+        error: "Fetch error",
+        message: "Failed to fetch the stream from the source"
+      });
+    }
+    
     return res.status(500).json({
       error: "Internal server error",
       message: "Failed to proxy the stream"

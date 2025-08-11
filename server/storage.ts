@@ -1,5 +1,5 @@
 import { type User, type InsertUser, type ProxyRequest, type InsertProxyRequest } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;

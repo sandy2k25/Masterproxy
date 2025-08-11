@@ -3,17 +3,26 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Proxy endpoint for M3U8 streams - supports /stream/[encoded-url]?origin=...&referer=...
-  app.get("/stream/:encodedUrl?", async (req, res) => {
+  // Proxy endpoint for M3U8 streams - supports /stream/[encoded-url]?origin=...&referer=....m3u8
+  app.get(["/stream/:encodedUrl", "/stream/:encodedUrl.m3u8", "/stream/:encodedUrl.ts"], async (req, res) => {
     try {
       // Support both query parameter and path parameter formats
       let url = req.query.url as string;
       const { origin, referer } = req.query;
       
-      // If URL is in path parameter, decode it
+      // If URL is in path parameter, decode it and reconstruct with extension
       if (req.params.encodedUrl && !url) {
         try {
-          url = decodeURIComponent(req.params.encodedUrl);
+          let decodedUrl = decodeURIComponent(req.params.encodedUrl);
+          
+          // Add extension based on the route matched
+          if (req.path.endsWith('.m3u8')) {
+            decodedUrl += '.m3u8';
+          } else if (req.path.endsWith('.ts')) {
+            decodedUrl += '.ts';
+          }
+          
+          url = decodedUrl;
         } catch (error) {
           return res.status(400).json({
             error: "Invalid URL encoding",
@@ -72,12 +81,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Rewrite segment URLs
             if (line.trim() && !line.startsWith('#') && !line.startsWith('http')) {
               const segmentUrl = baseUrl + line.trim();
-              const encodedSegmentUrl = encodeURIComponent(segmentUrl);
+              
+              // Handle segment URLs with new format
+              let segmentBaseUrl = segmentUrl;
+              let segmentExtension = '';
+              
+              if (segmentUrl.endsWith('.ts')) {
+                segmentBaseUrl = segmentUrl.slice(0, -3);
+                segmentExtension = '.ts';
+              } else if (segmentUrl.endsWith('.m3u8')) {
+                segmentBaseUrl = segmentUrl.slice(0, -5);
+                segmentExtension = '.m3u8';
+              }
+              
+              const encodedSegmentUrl = encodeURIComponent(segmentBaseUrl);
               const params = new URLSearchParams();
               if (origin && typeof origin === 'string') params.append('origin', origin);
               if (referer && typeof referer === 'string') params.append('referer', referer);
               const queryString = params.toString();
-              return `/stream/${encodedSegmentUrl}${queryString ? '?' + queryString : ''}`;
+              
+              return `/stream/${encodedSegmentUrl}${queryString ? '?' + queryString : ''}${segmentExtension}`;
             }
             return line;
           })
@@ -132,8 +155,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Build proxy URL with new format: /stream/[encoded-url]?origin=...&referer=...
-      const encodedUrl = encodeURIComponent(url);
+      // Build proxy URL with format: /stream/[url-without-extension]?origin=...&referer=...&.m3u8
+      let baseUrl = url;
+      let extension = '';
+      
+      // Extract extension if present
+      if (url.endsWith('.m3u8')) {
+        baseUrl = url.slice(0, -5); // Remove .m3u8
+        extension = '.m3u8';
+      } else if (url.endsWith('.ts')) {
+        baseUrl = url.slice(0, -3); // Remove .ts
+        extension = '.ts';
+      }
+      
+      const encodedBaseUrl = encodeURIComponent(baseUrl);
       const params = new URLSearchParams();
       if (origin && typeof origin === 'string') params.append('origin', origin);
       if (referer && typeof referer === 'string') params.append('referer', referer);
@@ -141,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         valid: true,
-        proxyUrl: `/stream/${encodedUrl}${queryString ? '?' + queryString : ''}`
+        proxyUrl: `/stream/${encodedBaseUrl}${queryString ? '?' + queryString : ''}${extension}`
       });
     } catch (error) {
       console.error('Validation error:', error);

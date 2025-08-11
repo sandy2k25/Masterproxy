@@ -19,9 +19,9 @@ export default function ApiDocs() {
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Badge className="bg-accent text-accent-foreground">GET</Badge>
-                  <span className="font-mono text-accent">/stream/[encoded-url]</span>
+                  <span className="font-mono text-accent">/stream/[encoded-url]?[headers].m3u8</span>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4">Proxies M3U8 streams with automatic header injection. URL is encoded in the path, headers as query parameters.</p>
+                <p className="text-muted-foreground text-sm mb-4">Proxies M3U8 streams with clean URLs. URL encoded in path, headers as query parameters, extension at the end.</p>
                 
                 <div className="space-y-4">
                   <div>
@@ -65,7 +65,7 @@ export default function ApiDocs() {
                             <div className="text-xs text-muted-foreground mb-1">With custom headers:</div>
                             <pre className="font-mono text-sm">
                               <span className="text-muted-foreground">GET </span>
-                              <span className="text-accent">/stream/https%3A%2F%2Fexample.com%2Fstream.m3u8?origin=https://custom.com&referer=https://custom.com</span>
+                              <span className="text-accent">/stream/https%3A%2F%2Fexample.com%2Fstream?origin=https://custom.com&referer=https://custom.com.m3u8</span>
                             </pre>
                           </div>
                         </div>

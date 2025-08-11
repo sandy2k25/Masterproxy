@@ -51,13 +51,18 @@ In DomCloud control panel:
 Create a `.domcloud` configuration file:
 
 ```yaml
-# .domcloud
 features:
-  - nodejs20
+  - node lts
+nginx:
+  root: public_html/dist/public
+  passenger:
+    enabled: "on"
+    app_start_command: env PORT=$PORT node index.js
+    app_env: production
+    app_root: public_html/dist
 commands:
   - npm install --production
   - npm run build
-start: npm run start
 ```
 
 ## DomCloud-Specific Features
@@ -145,22 +150,38 @@ process.on('warning', (warning) => {
 
 ### Common Issues
 
-1. **Node.js Version**
-   - Ensure DomCloud is using Node.js 20.x
-   - Check in control panel → Runtime Settings
+1. **Module Not Found Error**
+   ```
+   Error: Cannot find module '/home/user/public_html/dist/src/index.js'
+   ```
+   **Solution**: This happens when the build path is incorrect. The fix:
+   - Ensure your `.domcloud` file has `app_root: public_html/dist`
+   - The `app_start_command` should be `node index.js` (not `node dist/index.js`)
+   - Run `npm run build` to ensure `dist/index.js` exists
 
-2. **Port Configuration**
-   - Don't hardcode port 5000
+2. **Node.js Version Issues**
+   - Ensure DomCloud is using Node.js 20.x or higher
+   - Use `features: - node lts` in your `.domcloud` file
+   - Check build logs for Node.js version confirmation
+
+3. **Port Configuration**
+   - Don't hardcode port 5000 in production
    - Use `process.env.PORT || 5000`
+   - DomCloud automatically provides the PORT variable
 
-3. **Memory Limits**
-   - Monitor memory usage
-   - Upgrade plan if you hit limits
-   - Optimize your application for lower memory usage
+4. **Build Failures**
+   - Run `npm run build` locally first to test
+   - Check that `dist/index.js` and `dist/public/` are created
+   - Ensure all dependencies are in `package.json`
 
-4. **File Permissions**
+5. **File Permissions**
    - Ensure your files have correct permissions
    - Use DomCloud file manager to fix if needed
+
+6. **Memory Limits**
+   - Monitor memory usage in DomCloud dashboard
+   - Upgrade plan if you hit limits
+   - Optimize your application for lower memory usage
 
 ### Debugging
 ```javascript

@@ -85,7 +85,7 @@ If the automated deployment isn't working:
 
 2. **Upload the `dist/` folder** manually via DomCloud file manager
 
-3. **Create a simple startup script**:
+3. **Use absolute path in startup command**:
    ```yaml
    # .domcloud
    features:
@@ -94,9 +94,11 @@ If the automated deployment isn't working:
      root: public_html/dist/public
      passenger:
        enabled: "on"
-       app_start_command: env PORT=$PORT node /home/user/public_html/dist/index.js
+       app_start_command: env PORT=$PORT node /home/YOUR_USERNAME/public_html/dist/index.js
        app_env: production
    ```
+   
+   Replace `YOUR_USERNAME` with your actual DomCloud username.
 
 ## Other Common Issues
 

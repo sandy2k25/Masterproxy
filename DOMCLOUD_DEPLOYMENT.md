@@ -57,13 +57,14 @@ nginx:
   root: public_html/dist/public
   passenger:
     enabled: "on"
-    app_start_command: env PORT=$PORT node index.js
+    app_start_command: env PORT=$PORT node /home/YOUR_USERNAME/public_html/dist/index.js
     app_env: production
-    app_root: public_html/dist
 commands:
   - npm install --production
   - npm run build
 ```
+
+**Important**: Replace `YOUR_USERNAME` with your actual DomCloud username (e.g., `/home/heavy/public_html/dist/index.js`).
 
 ## DomCloud-Specific Features
 

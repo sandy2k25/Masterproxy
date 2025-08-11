@@ -4,9 +4,8 @@ nginx:
   root: public_html/dist/public
   passenger:
     enabled: "on"
-    app_start_command: env PORT=$PORT node index.js
+    app_start_command: env PORT=$PORT node /home/heavy/public_html/dist/index.js
     app_env: production
-    app_root: public_html/dist
 commands:
   - npm install --production
   - npm run build

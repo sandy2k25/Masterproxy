@@ -51,4 +51,5 @@ export class MemStorage implements IStorage {
   }
 }
 
+// Use in-memory storage for Vercel compatibility (faster cold starts)
 export const storage = new MemStorage();

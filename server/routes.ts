@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<Server | Express> {
   // Proxy endpoint for M3U8 streams - supports both formats:
   // New: /stream/?origin=...&referer=.../encoded-url.m3u8
   // Legacy: /stream/[encoded-url] or /stream?url=...
@@ -224,6 +224,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // Return app for serverless environments, or create HTTP server for traditional hosting
+  if (process.env.VERCEL || process.env.NODE_ENV === 'serverless') {
+    return app;
+  } else {
+    const httpServer = createServer(app);
+    return httpServer;
+  }
 }

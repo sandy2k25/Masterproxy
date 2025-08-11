@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/stream.ts": {
+      "maxDuration": 30
+    },
+    "api/validate-url.ts": {
+      "maxDuration": 10
+    },
+    "api/proxy-requests.ts": {
+      "maxDuration": 10
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/validate-url",
+      "dest": "/api/validate-url.ts"
+    },
+    {
+      "src": "/api/proxy-requests",
+      "dest": "/api/proxy-requests.ts"
+    },
+    {
+      "src": "/stream(.*)",
+      "dest": "/api/stream.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/dist/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "VERCEL": "1"
+  }
+}

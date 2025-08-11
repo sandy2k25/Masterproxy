@@ -28,10 +28,11 @@ Preferred communication style: Simple, everyday language.
 - **Proxy Logic**: Server-side URL proxying with predefined header injection for webxzplay.cfd domain
 
 ### Data Storage Solutions
-- **Database**: PostgreSQL configured through Drizzle with schema migrations
+- **Database**: PostgreSQL configured through Drizzle with schema migrations (optional)
 - **ORM**: Drizzle ORM with Zod schema validation for type-safe database operations
 - **Storage Interface**: Abstract storage interface with both PostgreSQL and in-memory implementations
-- **Session Store**: PostgreSQL-backed session management for persistent user sessions
+- **Session Store**: In-memory storage optimized for serverless environments (Vercel compatibility)
+- **Deployment Storage**: Uses in-memory storage for Vercel deployments to ensure fast cold starts
 
 ### Authentication and Authorization
 - **Current State**: Basic user schema defined but not actively implemented
@@ -41,11 +42,12 @@ Preferred communication style: Simple, everyday language.
 ### Core Proxy Functionality
 - **M3U8 Processing**: Handles both playlist files and video segments with automatic URL rewriting
 - **Custom Header Injection**: Configurable origin and referer headers with webxzplay.cfd as default fallback
-- **Clean URL Structure**: Uses `/stream/[encoded-url]?origin=...&referer=...` format with URL in path and headers as query parameters
-- **Dual Format Support**: Supports both new path-based format and legacy query parameter format for backward compatibility
+- **Clean URL Structure**: Uses `/stream/?origin=...&referer=.../encoded-url.m3u8` format with headers first and URL at the end
+- **Multiple Format Support**: Supports new serverless format and legacy query parameter format for backward compatibility
 - **Content Type Detection**: Proper MIME type handling for different streaming content types
 - **Error Handling**: Comprehensive validation and error responses for invalid URLs or failed requests
-- **Request Logging**: Database logging of all proxy requests for monitoring and analytics
+- **Request Logging**: In-memory logging of all proxy requests for monitoring and analytics
+- **Vercel Compatibility**: Serverless functions optimized for Vercel deployment with fast cold starts
 
 ## External Dependencies
 
@@ -78,3 +80,25 @@ Preferred communication style: Simple, everyday language.
 ### Database and Session Management
 - **connect-pg-simple**: PostgreSQL session store for Express sessions
 - **drizzle-zod**: Integration between Drizzle ORM and Zod validation schemas
+
+## Deployment Compatibility
+
+### Vercel Deployment
+- **Serverless Functions**: Individual API endpoints deployed as serverless functions for optimal performance
+- **File Structure**: 
+  - `/api/stream.ts` - Main proxy functionality
+  - `/api/validate-url.ts` - URL validation endpoint
+  - `/api/proxy-requests.ts` - Request history endpoint
+- **Configuration**: `vercel.json` configured for proper routing and function timeouts
+- **Storage**: Uses in-memory storage for fast cold starts in serverless environment
+- **Build Process**: Vite builds frontend to `client/dist`, functions deploy independently
+
+### Replit Deployment
+- **Native Support**: Works directly with Replit's hosting infrastructure
+- **Development**: Hot reload and live preview during development
+- **Storage**: Can use either PostgreSQL or in-memory storage based on configuration
+
+### Traditional Hosting
+- **Node.js Server**: Express server with built frontend serving
+- **Database**: Full PostgreSQL support with session management
+- **Process Management**: PM2 or similar for production deployment

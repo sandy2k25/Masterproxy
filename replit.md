@@ -96,6 +96,20 @@ Preferred communication style: Simple, everyday language.
   - .nvmrc and nixpacks.toml for Nixpacks fallback
   - Fixes `import.meta.dirname` TypeError on Railway deployment
 
+### Netlify Deployment
+- **Serverless Hosting**: Uses Netlify Functions for API endpoints
+- **Free Tier**: 100GB bandwidth and 125k function invocations monthly
+- **CDN Integration**: Global content delivery network for fast performance
+- **Auto-HTTPS**: Automatic SSL certificates and custom domain support
+- **Configuration**: Uses `netlify.toml` and dedicated function files
+- **Limitations**: 10-second function timeout (free tier), cold starts for serverless functions
+
+### Vercel Deployment (Alternative)
+- **Serverless Functions**: Pre-configured API endpoints in `/api` folder
+- **Edge Network**: Fast global deployment with automatic scaling
+- **Configuration**: Uses `vercel.json` for routing and function settings
+- **Deployment**: Existing serverless architecture ready for Vercel
+
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure
 - **Development**: Hot reload and live preview during development

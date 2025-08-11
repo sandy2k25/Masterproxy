@@ -46,6 +46,16 @@ Railway provides the best hosting environment for this streaming proxy service:
 
 See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) for detailed instructions.
 
+### Netlify Deployment
+
+Netlify provides serverless hosting with generous free tier:
+
+1. **Quick Deploy:** Connect your GitHub repository to Netlify
+2. **Auto-Configuration:** Netlify uses `netlify.toml` for build settings
+3. **Serverless Functions:** API endpoints work via Netlify Functions
+
+See [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md) for detailed instructions.
+
 ### Vercel Deployment
 
 This project is optimized for Vercel deployment with serverless functions:

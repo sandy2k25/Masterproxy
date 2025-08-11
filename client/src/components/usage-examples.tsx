@@ -21,12 +21,16 @@ export default function UsageExamples() {
 const customOrigin = 'https://example.com';
 const customReferer = 'https://example.com';
 
+// Encode the URL for the path
+const encodedUrl = encodeURIComponent(streamUrl);
+
+// Add custom headers as query parameters
 const params = new URLSearchParams({
-  url: streamUrl,
   origin: customOrigin,
   referer: customReferer
 });
-const proxyUrl = \`/stream?\${params.toString()}\`;
+
+const proxyUrl = \`/stream/\${encodedUrl}?\${params.toString()}\`;
 
 fetch(proxyUrl)
   .then(response => response.text())
@@ -48,8 +52,8 @@ fetch(proxyUrl)
               <CardContent className="p-4">
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
 {`const streamUrl = 'https://zekonew.newkso.ru/zeko/premium598/mono.m3u8';
+const encodedUrl = encodeURIComponent(streamUrl);
 const params = new URLSearchParams({
-  url: streamUrl,
   origin: 'https://custom.com',
   referer: 'https://custom.com'
 });
@@ -58,7 +62,7 @@ const player = videojs('video-player', {
   fluid: true,
   responsive: true,
   sources: [{
-    src: \`/stream?\${params.toString()}\`,
+    src: \`/stream/\${encodedUrl}?\${params.toString()}\`,
     type: 'application/x-mpegURL'
   }]
 });
@@ -79,12 +83,12 @@ player.ready(() => {
                 <pre className="text-sm text-foreground font-mono overflow-x-auto">
 {`# Basic request (default headers)
 curl -X GET \\
-  "https://your-domain.com/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8" \\
+  "https://your-domain.com/stream/https%3A%2F%2Fzekonew.newkso.ru%2Fzeko%2Fpremium598%2Fmono.m3u8" \\
   -H "Accept: application/vnd.apple.mpegurl"
 
 # With custom headers
 curl -X GET \\
-  "https://your-domain.com/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com" \\
+  "https://your-domain.com/stream/https%3A%2F%2Fexample.com%2Fstream.m3u8?origin=https://custom.com&referer=https://custom.com" \\
   -H "Accept: application/vnd.apple.mpegurl"`}
                 </pre>
               </CardContent>
@@ -100,7 +104,7 @@ curl -X GET \\
 {`<!-- Basic usage -->
 <video controls width="100%" height="auto">
   <source 
-    src="/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8" 
+    src="/stream/https%3A%2F%2Fzekonew.newkso.ru%2Fzeko%2Fpremium598%2Fmono.m3u8" 
     type="application/x-mpegURL">
   Your browser does not support HLS streaming.
 </video>
@@ -108,7 +112,7 @@ curl -X GET \\
 <!-- With custom headers -->
 <video controls width="100%" height="auto">
   <source 
-    src="/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com" 
+    src="/stream/https%3A%2F%2Fexample.com%2Fstream.m3u8?origin=https://custom.com&referer=https://custom.com" 
     type="application/x-mpegURL">
   Your browser does not support HLS streaming.
 </video>`}

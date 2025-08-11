@@ -3,10 +3,24 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Proxy endpoint for M3U8 streams
-  app.get("/stream", async (req, res) => {
+  // Proxy endpoint for M3U8 streams - supports /stream/[encoded-url]?origin=...&referer=...
+  app.get("/stream/:encodedUrl?", async (req, res) => {
     try {
-      const { url, origin, referer } = req.query;
+      // Support both query parameter and path parameter formats
+      let url = req.query.url as string;
+      const { origin, referer } = req.query;
+      
+      // If URL is in path parameter, decode it
+      if (req.params.encodedUrl && !url) {
+        try {
+          url = decodeURIComponent(req.params.encodedUrl);
+        } catch (error) {
+          return res.status(400).json({
+            error: "Invalid URL encoding",
+            message: "Failed to decode URL from path parameter"
+          });
+        }
+      }
       
       if (!url || typeof url !== 'string') {
         return res.status(400).json({
@@ -58,10 +72,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Rewrite segment URLs
             if (line.trim() && !line.startsWith('#') && !line.startsWith('http')) {
               const segmentUrl = baseUrl + line.trim();
-              const params = new URLSearchParams({ url: segmentUrl });
+              const encodedSegmentUrl = encodeURIComponent(segmentUrl);
+              const params = new URLSearchParams();
               if (origin && typeof origin === 'string') params.append('origin', origin);
               if (referer && typeof referer === 'string') params.append('referer', referer);
-              return `/stream?${params.toString()}`;
+              const queryString = params.toString();
+              return `/stream/${encodedSegmentUrl}${queryString ? '?' + queryString : ''}`;
             }
             return line;
           })
@@ -116,14 +132,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Build proxy URL with custom headers if provided
-      const params = new URLSearchParams({ url });
+      // Build proxy URL with new format: /stream/[encoded-url]?origin=...&referer=...
+      const encodedUrl = encodeURIComponent(url);
+      const params = new URLSearchParams();
       if (origin && typeof origin === 'string') params.append('origin', origin);
       if (referer && typeof referer === 'string') params.append('referer', referer);
+      const queryString = params.toString();
 
       res.json({
         valid: true,
-        proxyUrl: `/stream?${params.toString()}`
+        proxyUrl: `/stream/${encodedUrl}${queryString ? '?' + queryString : ''}`
       });
     } catch (error) {
       console.error('Validation error:', error);

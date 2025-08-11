@@ -19,29 +19,29 @@ export default function ApiDocs() {
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Badge className="bg-accent text-accent-foreground">GET</Badge>
-                  <span className="font-mono text-accent">/stream</span>
+                  <span className="font-mono text-accent">/stream/[encoded-url]</span>
                 </div>
-                <p className="text-muted-foreground text-sm mb-4">Proxies M3U8 streams with automatic header injection</p>
+                <p className="text-muted-foreground text-sm mb-4">Proxies M3U8 streams with automatic header injection. URL is encoded in the path, headers as query parameters.</p>
                 
                 <div className="space-y-4">
                   <div>
-                    <h5 className="text-sm font-semibold text-foreground mb-2">Query Parameters</h5>
+                    <h5 className="text-sm font-semibold text-foreground mb-2">URL Structure</h5>
                     <Card className="bg-background border-border">
                       <CardContent className="p-3">
                         <div className="font-mono text-sm space-y-2">
                           <div>
-                            <span className="text-primary">url</span>
-                            <span className="text-muted-foreground"> (required): </span>
-                            <span className="text-foreground">The M3U8 stream URL to proxy</span>
+                            <span className="text-primary">[encoded-url]</span>
+                            <span className="text-muted-foreground"> (path): </span>
+                            <span className="text-foreground">URL-encoded M3U8 stream URL</span>
                           </div>
                           <div>
                             <span className="text-primary">origin</span>
-                            <span className="text-muted-foreground"> (optional): </span>
+                            <span className="text-muted-foreground"> (query, optional): </span>
                             <span className="text-foreground">Custom Origin header (defaults to webxzplay.cfd)</span>
                           </div>
                           <div>
                             <span className="text-primary">referer</span>
-                            <span className="text-muted-foreground"> (optional): </span>
+                            <span className="text-muted-foreground"> (query, optional): </span>
                             <span className="text-foreground">Custom Referer header (defaults to webxzplay.cfd)</span>
                           </div>
                         </div>
@@ -58,14 +58,14 @@ export default function ApiDocs() {
                             <div className="text-xs text-muted-foreground mb-1">Basic request (uses default headers):</div>
                             <pre className="font-mono text-sm">
                               <span className="text-muted-foreground">GET </span>
-                              <span className="text-accent">/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8</span>
+                              <span className="text-accent">/stream/https%3A%2F%2Fzekonew.newkso.ru%2Fzeko%2Fpremium598%2Fmono.m3u8</span>
                             </pre>
                           </div>
                           <div>
                             <div className="text-xs text-muted-foreground mb-1">With custom headers:</div>
                             <pre className="font-mono text-sm">
                               <span className="text-muted-foreground">GET </span>
-                              <span className="text-accent">/stream?url=https://example.com/stream.m3u8&origin=https://custom.com&referer=https://custom.com</span>
+                              <span className="text-accent">/stream/https%3A%2F%2Fexample.com%2Fstream.m3u8?origin=https://custom.com&referer=https://custom.com</span>
                             </pre>
                           </div>
                         </div>

@@ -176,7 +176,7 @@ export default function ProxyDemo() {
               <CardContent className="p-4 font-mono text-sm">
                 <div className="text-muted-foreground mb-2">Your proxied URL:</div>
                 <div className="text-accent break-all">
-                  {generatedUrl || "/stream?url=https://zekonew.newkso.ru/zeko/premium598/mono.m3u8"}
+                  {generatedUrl || "/stream/https%3A%2F%2Fzekonew.newkso.ru%2Fzeko%2Fpremium598%2Fmono.m3u8"}
                 </div>
               </CardContent>
             </Card>

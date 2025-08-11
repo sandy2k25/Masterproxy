@@ -83,16 +83,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Deployment Compatibility
 
-### Vercel Deployment
-- **Serverless Functions**: Individual API endpoints deployed as serverless functions for optimal performance
-- **File Structure**: 
-  - `/api/stream.ts` - Main proxy functionality
-  - `/api/validate-url.ts` - URL validation endpoint
-  - `/api/proxy-requests.ts` - Request history endpoint
-- **Configuration**: `vercel.json` configured for proper routing and function timeouts
-- **Storage**: Uses in-memory storage for fast cold starts in serverless environment
-- **Build Process**: Vite builds frontend to `dist/public`, backend server to `dist/index.js`
-- **Fixed Issues**: Resolved output directory mismatch between Vite config (`dist/public`) and Vercel config (August 2025)
+### Railway Deployment (Recommended)
+- **Full Node.js Environment**: Perfect for streaming proxy applications without serverless limitations
+- **Build Process**: `npm run build` creates optimized production bundle
+- **Start Command**: `npm run start` runs the Express server in production mode
+- **Configuration**: `railway.json` provides deployment settings and health checks
+- **Performance**: No cold starts, efficient binary data handling, always-on server
+- **Cost**: $5/month for production usage, free tier available for development
 
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure

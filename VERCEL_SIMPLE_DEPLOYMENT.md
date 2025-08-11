@@ -9,6 +9,11 @@ After deployment, your stream will be accessible at:
 https://your-vercel-site.vercel.app/mono.m3u8
 ```
 
+If you get a 503 error, try the simplified version:
+```
+https://your-vercel-site.vercel.app/mono-simple.m3u8
+```
+
 This automatically proxies:
 ```
 https://zekonew.newkso.ru/zeko/premium598/mono.m3u8|origin=https://webxzplay.cfd&referer=https://webxzplay.cfd

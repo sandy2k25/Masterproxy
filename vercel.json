@@ -12,6 +12,12 @@
     "api/segment/[...url].ts": {
       "maxDuration": 30
     },
+    "api/test-stream.ts": {
+      "maxDuration": 15
+    },
+    "api/mono-simple.ts": {
+      "maxDuration": 30
+    },
     "api/validate-url.ts": {
       "maxDuration": 10
     },
@@ -39,6 +45,14 @@
     {
       "src": "/api/segment/(.*)",
       "dest": "/api/segment/[...url].ts"
+    },
+    {
+      "src": "/test-stream",
+      "dest": "/api/test-stream.ts"
+    },
+    {
+      "src": "/mono-simple.m3u8",
+      "dest": "/api/mono-simple.ts"
     },
     {
       "src": "/api/test",

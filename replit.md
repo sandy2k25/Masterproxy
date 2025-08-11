@@ -91,7 +91,10 @@ Preferred communication style: Simple, everyday language.
 - **Configuration**: `railway.json` provides deployment settings and health checks
 - **Performance**: No cold starts, efficient binary data handling, always-on server
 - **Cost**: $5/month for production usage, free tier available for development
-- **Version Fix**: Added `.nvmrc` and `nixpacks.toml` to enforce Node.js 20+ on Railway (fixes `import.meta.dirname` error)
+- **Version Fix**: Multiple deployment strategies to ensure Node.js 20+:
+  - Dockerfile with explicit Node.js 20.16.0 (primary solution)
+  - .nvmrc and nixpacks.toml for Nixpacks fallback
+  - Fixes `import.meta.dirname` TypeError on Railway deployment
 
 ### Replit Deployment
 - **Native Support**: Works directly with Replit's hosting infrastructure

@@ -22,11 +22,11 @@ git push -u origin main
 2. **Sign up** with GitHub
 3. **Click "Deploy from GitHub"**
 4. **Select your repository**
-5. **Configure settings:**
-   - Build Command: `npm run build`
-   - Start Command: `npm run start` 
-   - Port: Railway will auto-detect from your Express server
-   - Node.js Version: Automatically detected from `.nvmrc` (v20.11.0+)
+5. **Configuration (Auto-detected):**
+   - Build Method: Dockerfile (ensures Node.js 20.16.0)
+   - Health Check: Automatic on root path `/`
+   - Port: Railway auto-detects from Express server (5000)
+   - Start Command: Defined in Dockerfile (`npm run start`)
 
 ### 3. Environment Variables (Optional)
 If you need database or other secrets:
@@ -78,10 +78,10 @@ TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string
 
 This indicates Railway is using an older Node.js version (18.x) instead of the required Node.js 20.x. The solution:
 
-1. **Check your repository** has `.nvmrc` file with `20.11.0`
-2. **Check your repository** has `nixpacks.toml` with Node.js 20 configuration
-3. **Redeploy** your application after adding these files
-4. **Verify** in Railway logs that it's using Node.js 20.x during build
+1. **Docker Build (Recommended)**: Railway will automatically use the `Dockerfile` to build with Node.js 20.16.0
+2. **Alternative**: Check your repository has `.nvmrc` file with `20.16.0` and `nixpacks.toml` with Node.js 20 configuration
+3. **Redeploy** your application after pushing these files
+4. **Verify** in Railway logs that it's building with Node.js 20.x during deployment
 
 ### Common Issues
 - **Build Failures**: Ensure all environment variables are set in Railway dashboard
